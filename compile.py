@@ -8,6 +8,10 @@ INPUT = 4
 DGOTO = 5
 DLET = 6
 DIF = 7
+FOR = 8
+NEXT = 9
+COLOR = 10
+PLOT = 11
 
 def increment_string(s):
     if not s: return "a"
@@ -105,6 +109,26 @@ def pbinput(x):
     a.append((INPUT, x))
     i += 1
 
+def pfor(var, frm, to):
+    global i
+    a.append((FOR, var, frm, to))
+    i += 1
+
+def pnext(var):
+    global i
+    a.append((NEXT, var))
+    i += 1
+
+def pcolor(col):
+    global i
+    a.append((COLOR, col))
+    i += 1
+
+def pplot(x, y):
+    global i
+    a.append((PLOT, x, y))
+    i += 1
+
 def defer():
     global a, b, i2, i, labels, labels2
     l = gen_label()
@@ -163,4 +187,12 @@ def compile():
                 print(f'{i} LET {variables[x[1]]}={var_replace(x[2])}')
             case 7: # DIF
                 print(f'{i} IF {var_replace(x[1])} THEN {var_replace(x[2])}')
+            case 8: # FOR
+                print(f"{i} FOR {x[1]}={x[2]} TO {x[3]}")
+            case 9: # NEXT
+                print(f"{i} NEXT {x[1]}")
+            case 10: # COLOR
+                print(f"{i} COLOR {x[1]}")
+            case 11: # PLOT
+                print(f"{i} PLOT {x[1]}, {x[2]}")
             case _: raise Exception(f"Unimplemented {x}")
