@@ -144,20 +144,7 @@ def defer():
     i = c
     label(l)
 
-def defer_end():
-    global a, b, i, i2, labels, labels2
-    l = gen_label()
-    goto(l)
-    c = a
-    a = b
-    b = c
-    c = labels
-    labels = labels2
-    labels2 = c
-    c = i2
-    i2 = i
-    i = c
-    label(l)
+defer_end = defer
 
 def defer_gen():
     global a

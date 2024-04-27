@@ -1,7 +1,8 @@
 MEMORY
 {
-    ROM (x)   : ORIGIN = 0, LENGTH = 0x100000 /* 1024k */
-    RAM (xrw) : ORIGIN = 0x00400000, LENGTH = 0x800000	/* 8192k */
+    XOM (x)   : ORIGIN = 0, LENGTH = 0x100000 /* 1024k */
+    RAM (xrw) : ORIGIN = 0x00400000, LENGTH = 0x400000 /* 4096k */
+    ROM (r)   : ORIGIN = 0x04000000, LENGTH = 0x800000 /* 8192k */
 }
 ENTRY(_start)
 SECTIONS {
@@ -14,7 +15,7 @@ SECTIONS {
         *(.text*)
         . = ALIGN(4);
         _etext = .;
-    } >ROM
+    } >XOM
     .data :
     {
         . = ALIGN(4);
@@ -25,10 +26,6 @@ SECTIONS {
         *(.data*)
         *(.sdata)
         *(.sdata*)
-        *(.rodata)
-        *(.rodata*)
-        *(.srodata)
-        *(.srodata*)
         . = ALIGN(4);
         _edata = .;
     } >RAM
@@ -49,4 +46,11 @@ SECTIONS {
         . = ALIGN(4);
         _heap_start = .;
     } >RAM
+    .rodata :
+    {
+        *(.rodata)
+        *(.rodata*)
+        *(.srodata)
+        *(.srodata*)
+    } >ROM
 }

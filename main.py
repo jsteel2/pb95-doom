@@ -66,7 +66,7 @@ def bitlut(lut, rd, x, y):
     set_reg(rd, f"{variables['REGTEMP']}+{shl(variables[lut + 'RVALUE'], 24)}")
     defer_end()
 
-def gen_instrs(instrs, ram_begin):
+def gen_instrs(instrs, ram_begin, rom_begin):
     pc = 0
     rom = label('ROM')
     while pc < len(instrs):
@@ -91,24 +91,45 @@ def gen_instrs(instrs, ram_begin):
                         defer()
                         plet(variables["LITTER"], f"{get_reg(rs1)}+{imm}")
                         pbif(f"{variables['LITTER']}>{((1 << 32) - 1)}", f"{variables['LITTER']}={variables['LITTER']}+(-{1 << 32})")
+                        l1 = gen_label()
+                        l2 = gen_label()
+                        bif(f"{variables['LITTER']}>{rom_begin - 1}", f"GOTO {l1}")
                         arr.read("RAM", f"{variables['LITTER']}+(-{ram_begin})")
                         set_reg(rd, variables["RAMRVALUE"])
+                        goto(l2)
+                        label(l1)
+                        arr.read("ROM", f"{variables['LITTER']}+(-{rom_begin})")
+                        set_reg(rd, variables["ROMRVALUE"])
+                        label(l2)
                         pbsign_extend(get_reg(rd), 8)
                         defer_end()
                     case 1: # lh
                         defer()
                         plet(variables["LITTER"], f"{get_reg(rs1)}+{imm}")
                         pbif(f"{variables['LITTER']}>{((1 << 32) - 1)}", f"{variables['LITTER']}={variables['LITTER']}+(-{1 << 32})")
+                        l1 = gen_label()
+                        l2 = gen_label()
+                        bif(f"{variables['LITTER']}>{rom_begin - 1}", f"GOTO {l1}")
                         arr.read("RAM", f"{variables['LITTER']}+(-{ram_begin})")
                         plet(variables["REGTEMP"], variables["RAMRVALUE"])
                         arr.read("RAM", f"{variables['LITTER']}+1+(-{ram_begin})")
                         set_reg(rd, f"{variables['REGTEMP']}+{shl(variables['RAMRVALUE'], 8)}")
+                        goto(l2)
+                        label(l1)
+                        arr.read("ROM", f"{variables['LITTER']}+(-{rom_begin})")
+                        plet(variables["REGTEMP"], variables["ROMRVALUE"])
+                        arr.read("ROM", f"{variables['LITTER']}+1+(-{rom_begin})")
+                        set_reg(rd, f"{variables['REGTEMP']}+{shl(variables['ROMRVALUE'], 8)}")
+                        label(l2)
                         pbsign_extend(get_reg(rd), 16)
                         defer_end()
                     case 2: # lw
                         defer()
                         plet(variables["LITTER"], f"{get_reg(rs1)}+{imm}")
                         pbif(f"{variables['LITTER']}>{((1 << 32) - 1)}", f"{variables['LITTER']}={variables['LITTER']}+(-{1 << 32})")
+                        l1 = gen_label()
+                        l2 = gen_label()
+                        bif(f"{variables['LITTER']}>{rom_begin - 1}", f"GOTO {l1}")
                         arr.read("RAM", f"{variables['LITTER']}+(-{ram_begin})")
                         plet(variables["REGTEMP"], variables["RAMRVALUE"])
                         arr.read("RAM", f"{variables['LITTER']}+1+(-{ram_begin})")
@@ -117,6 +138,17 @@ def gen_instrs(instrs, ram_begin):
                         plet(variables["REGTEMP"], f"{variables['REGTEMP']}+{shl(variables['RAMRVALUE'], 16)}")
                         arr.read("RAM", f"{variables['LITTER']}+3+(-{ram_begin})")
                         set_reg(rd, f"{variables['REGTEMP']}+{shl(variables['RAMRVALUE'], 24)}")
+                        goto(l2)
+                        label(l1)
+                        arr.read("ROM", f"{variables['LITTER']}+(-{rom_begin})")
+                        plet(variables["REGTEMP"], variables["ROMRVALUE"])
+                        arr.read("ROM", f"{variables['LITTER']}+1+(-{rom_begin})")
+                        plet(variables["REGTEMP"], f"{variables['REGTEMP']}+{shl(variables['ROMRVALUE'], 8)}")
+                        arr.read("ROM", f"{variables['LITTER']}+2+(-{rom_begin})")
+                        plet(variables["REGTEMP"], f"{variables['REGTEMP']}+{shl(variables['ROMRVALUE'], 16)}")
+                        arr.read("ROM", f"{variables['LITTER']}+3+(-{rom_begin})")
+                        set_reg(rd, f"{variables['REGTEMP']}+{shl(variables['ROMRVALUE'], 24)}")
+                        label(l2)
                         defer_end()
                     case 4: # lbu
                         defer()
@@ -126,17 +158,35 @@ def gen_instrs(instrs, ram_begin):
                         else:
                             plet(variables["LITTER"], f"{get_reg(rs1)}+{imm}")
                             pbif(f"{variables['LITTER']}>{((1 << 32) - 1)}", f"{variables['LITTER']}={variables['LITTER']}+(-{1 << 32})")
+                            l1 = gen_label()
+                            l2 = gen_label()
+                            bif(f"{variables['LITTER']}>{rom_begin - 1}", f"GOTO {l1}")
                             arr.read("RAM", f"{variables['LITTER']}+(-{ram_begin})")
                             set_reg(rd, variables["RAMRVALUE"])
+                            goto(l2)
+                            label(l1)
+                            arr.read("ROM", f"{variables['LITTER']}+(-{rom_begin})")
+                            set_reg(rd, variables["ROMRVALUE"])
+                            label(l2)
                         defer_end()
                     case 5: # lhu
                         defer()
                         plet(variables["LITTER"], f"{get_reg(rs1)}+{imm}")
                         pbif(f"{variables['LITTER']}>{((1 << 32) - 1)}", f"{variables['LITTER']}={variables['LITTER']}+(-{1 << 32})")
+                        l1 = gen_label()
+                        l2 = gen_label()
+                        bif(f"{variables['LITTER']}>{rom_begin - 1}", f"GOTO {l1}")
                         arr.read("RAM", f"{variables['LITTER']}+(-{ram_begin})")
                         plet(variables["REGTEMP"], variables["RAMRVALUE"])
                         arr.read("RAM", f"{variables['LITTER']}+1+(-{ram_begin})")
                         set_reg(rd, f"{variables['REGTEMP']}+{shl(variables['RAMRVALUE'], 8)}")
+                        goto(l2)
+                        label(l1)
+                        arr.read("ROM", f"{variables['LITTER']}+(-{rom_begin})")
+                        plet(variables["REGTEMP"], variables["ROMRVALUE"])
+                        arr.read("ROM", f"{variables['LITTER']}+1+(-{rom_begin})")
+                        set_reg(rd, f"{variables['REGTEMP']}+{shl(variables['ROMRVALUE'], 8)}")
+                        label(l2)
                         defer_end()
                     case _:
                         raise Exception("Unimplemened insruction %x" % instr)
@@ -660,11 +710,15 @@ def gen(elf):
     for sec in ELFFile(elf).iter_sections():
         if sec.name == ".text":
             text = sec.data()
-        elif sec.name == ".data": # TODO: put readonly memory in a different section so we can make a readonly array for it, which takes up a third of the space
-            arr.init("RAM", sec.data(), 12 * 1024 * 1024) # TODO: mess with the doom source to reduce ram usage
+        elif sec.name == ".data":
+            arr.init("RAM", sec.data(), 4 * 1024 * 1024) # TODO: mess with the doom source to reduce ram usage
             ram_begin = sec.header.sh_addr
+        elif sec.name == ".rodata":
+            d = sec.data()
+            arr.init("ROM", d, len(d), readonly=True)
+            rom_begin = sec.header.sh_addr
 
-    gen_instrs(text, ram_begin)
+    gen_instrs(text, ram_begin, rom_begin)
 
     arr.gen()
     defer_gen()
