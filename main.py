@@ -8,6 +8,7 @@ import sys
 import math
 
 # TODO: more efficient rounding
+# TODO: implement a RAM/ROM cache
 
 def get_reg(reg):
     if reg == 0: return 0
@@ -711,7 +712,7 @@ def gen(elf):
         if sec.name == ".text":
             text = sec.data()
         elif sec.name == ".data":
-            arr.init("RAM", sec.data(), 4 * 1024 * 1024) # TODO: mess with the doom source to reduce ram usage
+            arr.init("RAM", sec.data(), 1 * 1024 * 1024) # TODO: mess with the doom source to reduce ram usage
             ram_begin = sec.header.sh_addr
         elif sec.name == ".rodata":
             d = sec.data()
@@ -720,8 +721,8 @@ def gen(elf):
 
     gen_instrs(text, ram_begin, rom_begin)
 
-    arr.gen()
     defer_gen()
+    arr.gen()
     label("END")
     bprint('"GOODBYE"')
     compile()

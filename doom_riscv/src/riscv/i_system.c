@@ -60,8 +60,8 @@ I_Init(void)
 byte *
 I_ZoneBase(int *size)
 {
-	/* Give 3M to DOOM */
-	*size = 3 * 1024 * 1024;
+	/* Give 512K to DOOM */
+	*size = 512 * 1024;
 	return (byte *) malloc (*size);
 }
 

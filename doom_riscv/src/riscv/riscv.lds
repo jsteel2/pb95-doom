@@ -1,7 +1,7 @@
 MEMORY
 {
     XOM (x)   : ORIGIN = 0, LENGTH = 0x100000 /* 1024k */
-    RAM (xrw) : ORIGIN = 0x00400000, LENGTH = 0x400000 /* 4096k */
+    RAM (xrw) : ORIGIN = 0x00400000, LENGTH = 0x100000 /* 1024k */
     ROM (r)   : ORIGIN = 0x04000000, LENGTH = 0x800000 /* 8192k */
 }
 ENTRY(_start)

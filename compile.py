@@ -147,11 +147,12 @@ def defer():
 defer_end = defer
 
 def defer_gen():
-    global a
+    global a, i
     a += b
     d = label("DEFERRED")
     for k, v in labels2.items():
         labels[k] = d + v
+    i += len(b)
 
 def compile():
     for i, x in enumerate(a):
