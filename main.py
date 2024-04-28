@@ -257,7 +257,7 @@ def gen_instrs(instrs, ram_begin, rom_begin):
                             arr.read("RAM", f"{get_reg(rs2)}+({variables['LITTER']}+(-1))*320+({variables['LITTER2']}+(-1))+(-{ram_begin})")
                             arr.read("PALETTE", variables["RAMRVALUE"])
                             pcolor(variables["PALETTERVALUE"])
-                            pplot(variables["LITTER2"], variables["LITTER"])
+                            pplot(variables["LITTER2"], f"{variables['LITTER']}+50")
                             pnext(variables["LITTER2"])
                             pnext(variables["LITTER"])
                         else:
