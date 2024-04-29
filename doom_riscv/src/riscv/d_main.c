@@ -543,7 +543,7 @@ void IdentifyVersion (void)
     gamemode = commercial;
     D_AddFile ("tnt.wad");
 #elif 1
-    gamemode = retail;
+    gamemode = shareware;
     D_AddFile ("doomu.wad");
 #elif 0
     gamemode = registered;
