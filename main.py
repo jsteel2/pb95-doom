@@ -252,6 +252,7 @@ def gen_instrs(instrs, ram_begin, rom_begin):
                             shr("LITTER", get_reg(rs2), 8)
                             bprint(snip(get_reg(rs2), variables["LITTER"], 8))
                         elif rs1 == 0 and simm == 2:
+                            pcls()
                             pfor(variables["LITTER"], 1, 200)
                             pfor(variables["LITTER2"], 1, 320)
                             arr.read("RAM", f"{get_reg(rs2)}+({variables['LITTER']}+(-1))*320+({variables['LITTER2']}+(-1))+(-{ram_begin})")

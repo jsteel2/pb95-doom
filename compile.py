@@ -12,6 +12,7 @@ FOR = 8
 NEXT = 9
 COLOR = 10
 PLOT = 11
+CLS = 12
 
 def increment_string(s):
     if not s: return "a"
@@ -129,6 +130,11 @@ def pplot(x, y):
     a.append((PLOT, x, y))
     i += 1
 
+def pcls():
+    global i
+    a.append((CLS,))
+    i += 1
+
 def defer():
     global a, b, i2, i, labels, labels2
     l = gen_label()
@@ -183,4 +189,6 @@ def compile():
                 print(f"{i} COLOR {x[1]}")
             case 11: # PLOT
                 print(f"{i} PLOT {x[1]}, {x[2]}")
+            case 12: # CLS
+                print(f"{i} CLS")
             case _: raise Exception(f"Unimplemented {x}")
