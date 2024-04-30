@@ -713,7 +713,7 @@ def gen(elf):
         if sec.name == ".text":
             text = sec.data()
         elif sec.name == ".data":
-            arr.init("RAM", sec.data(), 1 * 1024 * 1024) # TODO: mess with the doom source to reduce ram usage
+            arr.init("RAM", sec.data(), 2 * 1024 * 1024) # TODO: mess with the doom source to reduce ram usage
             ram_begin = sec.header.sh_addr
         elif sec.name == ".rodata":
             d = sec.data()
